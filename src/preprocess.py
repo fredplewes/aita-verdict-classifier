@@ -23,10 +23,14 @@ def cleantext (text):
 
 # TODO: This is incredibly slow, find something faster
 df = pd.read_csv("data/aita_clean.csv")
+# drop rows with missing title or body
+df = df.dropna(subset=["title", "body"])
 tqdm.pandas(desc="Cleaning post titles")
 df["title"] = df["title"].progress_apply(cleantext)
 tqdm.pandas(desc="Cleaning post contents")
-df["body"] = df["body"].progess_apply(cleantext)
-df[["title", "body, verdict"]].to_csv("data/processed/aita_processed.csv", index=False)
-
-print(f"Processed Text: {text}")
+df["body"] = df["body"].progress_apply(cleantext)
+# drop empty rows again incase cleaning removed all text
+# keeping in mind these are empty strings now instead of NaN
+df = df[df["title"].str.strip().astype(bool) & df["body"].str.strip().astype(bool)]
+df[["title", "body", "verdict"]].to_csv("data/processed/aita_processed.csv", index=False)
+print("Preprocessing complete. Processed data saved to data/processed/aita_processed.csv")
