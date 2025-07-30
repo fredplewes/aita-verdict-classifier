@@ -17,3 +17,4 @@ X_body = vectoriser.fit_transform(bodies)
 
 X = hstack([X_title, X_body])
 joblib.dump(X, "data/processed/feature_vector.joblib")
+print("Preprocessing complete. Processed data saved to data/processed/aita_processed.csv")
